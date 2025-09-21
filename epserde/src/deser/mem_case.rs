@@ -30,6 +30,16 @@ bitflags! {
         /// This flag is only a suggestion, and it is ignored if the kernel does
         /// not support it. It is mainly useful to support `madvise()` on Linux.
         const RANDOM_ACCESS = 1 << 2;
+        /// Suggest that the mapped region will be accessed in the near future.
+        ///
+        /// This flag is only a suggestion, and it is ignored if the kernel does
+        /// not support it. It is mainly useful to support `madvise()` on Linux.
+        const WILLNEED = 1 << 3;
+        /// Suggest that the mapped region will be not accessed in the near future.
+        ///
+        /// This flag is only a suggestion, and it is ignored if the kernel does
+        /// not support it. It is mainly useful to support `madvise()` on Linux.
+        const WONTNEED = 1 << 3;
     }
 }
 
@@ -53,6 +63,12 @@ impl Flags {
         }
         if self.contains(Self::TRANSPARENT_HUGE_PAGES) {
             flags |= mmap_rs::MmapFlags::TRANSPARENT_HUGE_PAGES;
+        }
+        if self.contains(Self::WILLNEED) {
+            flags |= mmap_rs::MmapFlags::WILLNEED;
+        }
+        if self.contains(Self::WONTNEED) {
+            flags |= mmap_rs::MmapFlags::WONTNEED;
         }
 
         flags
